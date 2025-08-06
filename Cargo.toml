@@ -1,0 +1,13 @@
+[package]
+name = "kittentts-rust"
+version = "0.1.0"
+edition = "2024"
+
+[workspace]
+
+[dependencies]
+thiserror = "2.0.12"
+ort = "=2.0.0-rc.10"
+ndarray = "0.16.1"
+npyz = { version = "0.8.4", features = ["npz"] }
+cmudict-fast = "0.8.0"
