@@ -1,10 +1,10 @@
-# Kitten TTS 😻
+# Kitten TTS 😻 Rust fork 🦀
 
 Kitten TTS is an open-source realistic text-to-speech model with just 15 million parameters, designed for lightweight deployment and high-quality voice synthesis.
 
-*Currently in developer preview*
+*Currently in developer preview (Original author note)*
 
-[Join our discord](https://discord.gg/upcyF5s6)
+[Checkout original project git](https://github.com/KittenML/KittenTTS)
 
 
 ## ✨ Features
@@ -14,48 +14,30 @@ Kitten TTS is an open-source realistic text-to-speech model with just 15 million
 - **High-quality voices**: Several premium voice options available
 - **Fast inference**: Optimized for real-time speech synthesis
 
+## 🦀 Fork Features
+
+- No hard espeak dependency
+- Option of using any phonemizer
 
 
 ## 🚀 Quick Start
 
-### Installation
+### Usage
 
 ```
-pip install https://github.com/KittenML/KittenTTS/releases/download/0.1/kittentts-0.1.0-py3-none-any.whl
+# Create development environment using Nix package manager
+nix develop
 ```
 
 
 
  ### Basic Usage 
 
+```rust
+let model = crate::KittenModel::model_builtin(crate::KittenVoice::default());
+let inference = model
+    .unwrap()
+    .generate("This high quality TTS model works without a GPU".to_string());
+let (waveform, _) = inference.unwrap();
+let wav = crate::wav::save_array1_f32_as_wav(&waveform, "out/out", 22000);
 ```
-from kittentts import KittenTTS
-m = KittenTTS("KittenML/kitten-tts-nano-0.1")
-
-audio = m.generate("This high quality TTS model works without a GPU", voice='expr-voice-2-f' )
-
-# available_voices : [  'expr-voice-2-m', 'expr-voice-2-f', 'expr-voice-3-m', 'expr-voice-3-f',  'expr-voice-4-m', 'expr-voice-4-f', 'expr-voice-5-m', 'expr-voice-5-f' ]
-
-# Save the audio
-import soundfile as sf
-sf.write('output.wav', audio, 24000)
-
-```
-
-
-
-
-
-## 💻 System Requirements
-
-Works literally everywhere
-
-
-
-## Checklist 
-
-- [x] Release a preview model
-- [ ] Release the fully trained model weights
-- [ ] Release mobile SDK 
-- [ ] Release web version 
-

@@ -3,7 +3,7 @@ use std::{collections::HashMap, path::Path, str::FromStr};
 use cmudict_fast::{Cmudict, Rule};
 use thiserror::Error;
 
-const DICT: &str = include_str!("../model-files/cmudict.dict");
+const DICT: &str = include_str!("../model-files/cmu.dict");
 
 #[derive(Error, Debug, Clone)]
 pub enum PhonemizerError {
@@ -20,20 +20,50 @@ pub struct Phonemizer {
 fn get_ipa() -> HashMap<&'static str, &'static str> {
     HashMap::from([
         ("AA", "ɑ"),
+        ("AA1", "ɑː"),
+        ("AA2", "ɑː"),
         ("AE", "æ"),
-        ("AH", "ʌ"),
+        ("AE1", "æ"),
+        ("AE2", "æ"),
+        ("AH", "ə"),
+        ("AH1", "ʌ"),
+        ("AH2", "ə"),
         ("AO", "ɔ"),
+        ("AO1", "ɔː"),
+        ("AO2", "ɔː"),
         ("AW", "aʊ"),
+        ("AW1", "aʊ"),
+        ("AW2", "aʊ"),
         ("AY", "aɪ"),
+        ("AY1", "aɪ"),
+        ("AY2", "aɪ"),
         ("EH", "ɛ"),
-        ("ER", "ɚ"),
+        ("EH1", "ɛ"),
+        ("EH2", "ɛ"),
+        ("ER", "ɝ"),
+        ("ER1", "ɝː"),
+        ("ER2", "ɝː"),
         ("EY", "eɪ"),
-        ("IH", "ɪ"),
+        ("EY1", "eɪ"),
+        ("EY2", "eɪ"),
+        ("IH", "ᵻ"),
+        ("IH1", "ɪ"),
+        ("IH2", "ɪ"),
         ("IY", "i"),
+        ("IY1", "iː"),
+        ("IY2", "iː"),
         ("OW", "oʊ"),
+        ("OW1", "oʊ"),
+        ("OW2", "oʊ"),
         ("OY", "ɔɪ"),
+        ("OY1", "ɔɪ"),
+        ("OY2", "ɔɪ"),
         ("UH", "ʊ"),
+        ("UH1", "ʊ"),
+        ("UH2", "ʊ"),
         ("UW", "u"),
+        ("UW1", "uː"),
+        ("UW2", "uː"),
         ("B", "b"),
         ("CH", "tʃ"),
         ("D", "d"),
@@ -74,34 +104,35 @@ impl Phonemizer {
         Ok(Self { dict, ipa })
     }
 
-    pub fn phonemize(&self, word: &str) -> String {
-        let lower = word.to_lowercase();
-        let upper = word.to_uppercase();
-        let rules = self.dict.get(lower.as_str());
-        let rule = if rules.is_none() {
-            Rule::from_str(upper.as_str()).unwrap()
+    pub fn phonemize(&self, word: &str) -> Option<String> {
+        let lower_case = word.to_lowercase();
+        let upper_case = word.to_uppercase();
+
+        let rules = self.dict.get(lower_case.as_str());
+        let rule = if let Some(rule) = rules {
+            rule[0].clone()
         } else {
-            rules.unwrap()[0].clone()
+            let rule_from_str = Rule::from_str(upper_case.as_str());
+            match rule_from_str {
+                Ok(rule) => rule,
+                Err(_) => return None,
+            }
         };
 
         let pronunciation = rule.pronunciation();
         let phonemized: String = if pronunciation.is_empty() {
-            upper
+            upper_case
         } else {
             pronunciation
                 .iter()
                 .map(|p| {
-                    let key = p
-                        .to_string()
-                        .replace("0", "")
-                        .replace("1", "")
-                        .replace("2", "");
+                    let key = p.to_string().replace("0", "");
 
                     self.ipa[key.as_str()]
                 })
                 .collect()
         };
 
-        phonemized
+        Some(phonemized)
     }
 }
