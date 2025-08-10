@@ -381,6 +381,8 @@ impl KittenModel {
 
 #[cfg(test)]
 mod tests {
+    use tempfile::TempDir;
+
     use crate::wav::save_array1_f32_as_wav;
 
     use super::*;
@@ -432,7 +434,9 @@ mod tests {
         assert_eq!(inference.is_ok(), true);
         let (waveform, _) = inference.unwrap();
 
-        let res = save_array1_f32_as_wav(&waveform, "out/out.wav", None);
+        let temp_dir = TempDir::new().unwrap();
+        let file_path = temp_dir.path().join("out.wav");
+        let res = save_array1_f32_as_wav(&waveform, file_path, None);
         assert_eq!(res.is_ok(), true);
     }
 
@@ -446,9 +450,9 @@ mod tests {
         assert_eq!(inference.is_ok(), true);
         let (waveform, _) = inference.unwrap();
 
-        let res = save_array1_f32_as_wav(&waveform, "out/phonems.wav", None);
-        assert_eq!(res.is_ok(), true);
-
+        let temp_dir = TempDir::new().unwrap();
+        let file_path = temp_dir.path().join("phonems.wav");
+        let res = save_array1_f32_as_wav(&waveform, file_path, None);
         assert_eq!(res.is_ok(), true);
     }
 }

@@ -469,6 +469,7 @@ dependencies = [
  "ndarray",
  "npyz",
  "ort",
+ "tempfile",
  "thiserror 2.0.12",
 ]
 

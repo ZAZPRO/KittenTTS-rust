@@ -12,3 +12,6 @@ ort = "=2.0.0-rc.10"
 ndarray = "0.16.1"
 npyz = { version = "0.8.4", features = ["npz"] }
 cmudict-fast = "0.8.0"
+
+[dev-dependencies]
+tempfile = "3.20.0"
