@@ -16,13 +16,20 @@ Kitten TTS is an open-source realistic text-to-speech model with just 15 million
 
 ## 🦀 Fork Features
 
+- CLI
 - No hard espeak dependency
 - Option of using any phonemizer
 
 
 ## 🚀 Quick Start
 
-### Usage
+### Usage CLI
+```
+# Build package using Nix package manager
+nix build
+```
+
+### Usage Lib
 
 ```
 # Create development environment using Nix package manager
@@ -31,7 +38,7 @@ nix develop
 
 
 
- ### Basic Usage 
+ ### Basic Lib Usage 
 
 ```rust
 let model = crate::KittenModel::model_builtin(crate::KittenVoice::default());
@@ -39,5 +46,5 @@ let inference = model
     .unwrap()
     .generate("This high quality TTS model works without a GPU".to_string());
 let (waveform, _) = inference.unwrap();
-let wav = crate::wav::save_array1_f32_as_wav(&waveform, "out/out", 22000);
+let wav = crate::wav::save_array1_f32_as_wav(&waveform, "out/out.wav", None);
 ```
