@@ -1,16 +1,18 @@
 use std::{
     fs::File,
     io::{self, Write},
+    path::Path,
 };
 
 use ndarray::Array1;
 
-pub fn save_array1_f32_as_wav(
+pub fn save_array1_f32_as_wav<P: AsRef<Path>>(
     data: &Array1<f32>,
-    filename: &str,
-    sample_rate: u32,
+    out_path: P,
+    sample_rate: Option<u32>,
 ) -> Result<(), io::Error> {
-    let mut file = File::create(format!("{filename}.wav"))?;
+    let mut file = File::create(out_path)?;
+    let sample_rate = sample_rate.unwrap_or(22000);
 
     let num_samples = data.len() as u32;
     let num_channels = 1u16;

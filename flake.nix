@@ -19,27 +19,63 @@
         pkgs = nixpkgs.legacyPackages.${system};
         rust_fenix = with fenix.packages.${system};
           combine [
-            stable.toolchain
+            (stable.withComponents [
+              "cargo"
+              "rustc"
+            ])
           ];
-        libs = with pkgs; [
+        rust_fenix_dev = with fenix.packages.${system};
+          combine [
+            (stable.withComponents [
+              "cargo"
+              "clippy"
+              "rust-src"
+              "rustc"
+              "rustfmt"
+            ])
+          ];
+        rustPlatform = pkgs.makeRustPlatform {
+          cargo = rust_fenix;
+          rustc = rust_fenix;
+        };
+        rust = pkgs.rust-bin.stable.latest.default;
+
+        native_libs = with pkgs; [
           pkg-config
           openssl
         ];
-      in {
-        nixpkgs.overlays = [fenix.overlays.default];
+        native_libs_path = pkgs.lib.makeLibraryPath native_libs;
 
+        kitten-cli = rustPlatform.buildRustPackage {
+          nativeBuildInputs = native_libs;
+          pname = "kitten-cli";
+          version = "0.1.0";
+          src = ./.;
+
+          LD_LIBRARY_PATH = native_libs_path;
+          cargoLock.lockFile = ./Cargo.lock;
+          cargoBuildFlags = [
+            "--package"
+            "kittentts-cli"
+          ];
+        };
+      in {
         devShells.default = with pkgs;
           mkShell {
-            nativeBuildInputs = libs;
+            nativeBuildInputs = native_libs;
 
             packages = [
-              clang
-              rust_fenix
+              rust_fenix_dev
               rust-analyzer
             ];
 
-            LD_LIBRARY_PATH = lib.makeLibraryPath libs;
+            LD_LIBRARY_PATH = native_libs_path;
           };
+
+        packages = {
+          kitten-cli = kitten-cli;
+          default = kitten-cli;
+        };
       }
     );
 }

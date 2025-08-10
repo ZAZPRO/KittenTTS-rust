@@ -390,7 +390,7 @@ mod tests {
         let res = KittenModel::model_from_files(
             "./model-files/kitten_tts_nano_v0_1.onnx",
             "./model-files/voices.npz",
-            "./model-files/cmudict.dict",
+            "./model-files/cmu.dict",
             KittenVoice::default(),
         );
         assert_eq!(res.is_ok(), true);
@@ -432,7 +432,7 @@ mod tests {
         assert_eq!(inference.is_ok(), true);
         let (waveform, _) = inference.unwrap();
 
-        let res = save_array1_f32_as_wav(&waveform, "out/out", 22000);
+        let res = save_array1_f32_as_wav(&waveform, "out/out.wav", None);
         assert_eq!(res.is_ok(), true);
     }
 
@@ -446,7 +446,7 @@ mod tests {
         assert_eq!(inference.is_ok(), true);
         let (waveform, _) = inference.unwrap();
 
-        let res = save_array1_f32_as_wav(&waveform, "out/phonems", 22000);
+        let res = save_array1_f32_as_wav(&waveform, "out/phonems.wav", None);
         assert_eq!(res.is_ok(), true);
 
         assert_eq!(res.is_ok(), true);
